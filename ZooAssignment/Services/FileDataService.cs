@@ -52,6 +52,7 @@ namespace ZooAssignment.Services
             {               
                 _log.LogError("Price text file is not in correct format");             
                 _log.LogError(ex.Message);
+                Console.WriteLine("Price text file is not in correct format");
             }
 
             return priceList;
@@ -76,6 +77,7 @@ namespace ZooAssignment.Services
             {               
                 _log.LogError("Animal CSV file is not in correct format");             
                 _log.LogError(ex.Message);
+                Console.WriteLine("Animal CSV file is not in correct format");
             }
 
             return animalsList;
@@ -108,6 +110,7 @@ namespace ZooAssignment.Services
             {
                 _log.LogError("Zoo content file is not in correct format");
                 _log.LogError(ex.Message);
+                Console.WriteLine("Zoo content file is not in correct format");
             }            
 
             return zooContent;

@@ -47,19 +47,19 @@ namespace ZooAssignment.Services
             {
                 _log.LogError("File cannot be found");
                 _log.LogError(ex.Message);
-                throw new Exception("File cannot be found");
+                Console.WriteLine("File cannot be found");
             }
             catch (FileLoadException ex)
             {
                 _log.LogError("File cannot be loaded");
                 _log.LogError(ex.Message);
-                throw new Exception("File cannot be loaded");
+                Console.WriteLine("File cannot be loaded");
             }
             catch (Exception e)
             {
                 _log.LogError("Error while returning data, please check your text file");
                 _log.LogError(e.Message);
-                throw new Exception("Error while returning data, please check your text file");
+                Console.WriteLine("Error while returning data, please check your text file");
             }
 
             return txtData;
@@ -88,19 +88,19 @@ namespace ZooAssignment.Services
             {
                 _log.LogError("File cannot be found");
                 _log.LogError(ex.Message);
-                throw new Exception("File cannot be found");
+                Console.WriteLine("File cannot be found");
             }
             catch (FileLoadException ex)
             {
                 _log.LogError("File cannot be loaded");
                 _log.LogError(ex.Message);
-                throw new Exception("File cannot be loaded");
+                Console.WriteLine("File cannot be loaded");
             }
             catch (Exception e)
             {
                 _log.LogError("Error while returning data, please check your csv file");
                 _log.LogError(e.Message);
-                throw new Exception("Error while returning data, please check your csv file");
+                Console.WriteLine("Error while returning data, please check your csv file");
             }
 
             return records;
@@ -123,19 +123,19 @@ namespace ZooAssignment.Services
             {
                 _log.LogError("File cannot be found");
                 _log.LogError(ex.Message);
-                throw new Exception("File cannot be found");
+                Console.WriteLine("File cannot be found");
             }
             catch (FileLoadException ex)
             {
                 _log.LogError("File cannot be loaded");
                 _log.LogError(ex.Message);
-                throw new Exception("File cannot be loaded");
+                Console.WriteLine("File cannot be loaded");
             }
             catch (Exception e)
             {
                 _log.LogError("Error while returning data, please check your xml file");
                 _log.LogError(e.Message);
-                throw new Exception("Error while returning data, please check your xml file");
+                 Console.WriteLine("Error while returning data, please check your xml file");
             }
 
             return xElements;

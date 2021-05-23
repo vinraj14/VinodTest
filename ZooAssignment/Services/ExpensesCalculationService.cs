@@ -34,7 +34,8 @@ namespace ZooAssignment.Services
 
             if (prices.Count == 0)
             {
-                Console.WriteLine("Price details not availalbe");
+                Console.WriteLine("Price details not availalbe, press any button to exit from application");
+                Console.ReadKey();
                 Environment.Exit(0);
             }
 
@@ -49,21 +50,24 @@ namespace ZooAssignment.Services
             var animals = _fileDataService.GetAnimals(csvPath);
             if (animals.Count == 0)
             {
-                Console.WriteLine("Animal details not availalbe");
+                Console.WriteLine("Animal details not availalbe, press any button to exit from application");
+                Console.ReadKey();
                 Environment.Exit(0);
             }
 
             return animals;
         }
 
-        public List<ZooContent> GetZooContents() {
+        public List<ZooContent> GetZooContents()
+        {            
 
             string xmlPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), _config.GetValue<string>("ZooContentPath"));
 
             var zooContents = _fileDataService.GetZooContent(xmlPath);
             if (zooContents.Count == 0)
             {
-                Console.WriteLine("Zoo content details not availalbe");
+                Console.WriteLine("Zoo content details not availalbe, press any button to exit from application");
+                Console.ReadKey();
                 Environment.Exit(0);
             }
 
@@ -72,37 +76,48 @@ namespace ZooAssignment.Services
 
         public decimal GetTotalCost()
         {
-            _log.LogInformation("Entered into total cost service");
-                
+            decimal totalcost = 0;
 
-            var prices = GetPrice();
-
-            var animals = GetAnimals();
-
-            var zooContents = GetZooContents();
+            try
+            {
+                _log.LogInformation("Entered into total cost service");
 
 
-            var totalWeights = zooContents.GroupBy(a => a.Type).Select(a => new { TotalWeight = a.Sum(b => b.Weight), Name = a.Key }).ToList();
+                var prices = GetPrice();
 
-            var allanimalsdiet = (from animalweight in totalWeights
-                                  join animaldiet in animals on animalweight.Name equals animaldiet.Animal
-                                  select new
-                                  {
-                                      animaldiet.Animal,
-                                      animaldiet.FoodPercentage,
-                                      animaldiet.FoodType,
-                                      meatweight = animaldiet.FoodType.ToLower() == FoodTypes.meat.ToString() ? animalweight.TotalWeight * decimal.Parse(animaldiet.EatingPercentage) : (animaldiet.FoodType.ToLower() == FoodTypes.both.ToString() ? ((animalweight.TotalWeight * decimal.Parse(animaldiet.EatingPercentage)) * decimal.Parse(animaldiet.FoodPercentage, CultureInfo.InvariantCulture) / 100) : 0),
-                                      fruitweight = animaldiet.FoodType.ToLower() == FoodTypes.fruit.ToString() ? animalweight.TotalWeight * decimal.Parse(animaldiet.EatingPercentage) : (animaldiet.FoodType.ToLower() == FoodTypes.both.ToString() ? ((animalweight.TotalWeight * decimal.Parse(animaldiet.EatingPercentage)) * (100 - decimal.Parse(animaldiet.FoodPercentage, CultureInfo.InvariantCulture)) / 100) : 0)
+                var animals = GetAnimals();
 
-                                  }).ToList();
+                var zooContents = GetZooContents();
 
-            var meatcost = allanimalsdiet.ToList().Select(c => c.meatweight).Sum() * (prices.Where(a => a.FoodType.ToLower() == FoodTypes.meat.ToString()).Select(c => c.Rate).FirstOrDefault());
-            var fruitcost = allanimalsdiet.ToList().Select(c => c.fruitweight).Sum() * (prices.Where(a => a.FoodType.ToLower() == FoodTypes.fruit.ToString()).Select(c => c.Rate).FirstOrDefault());
-            var totalcost = meatcost + fruitcost;
 
-            _log.LogInformation("Total cost : {totalcost}", totalcost);
+                var totalWeights = zooContents.GroupBy(a => a.Type).Select(a => new { TotalWeight = a.Sum(b => b.Weight), Name = a.Key }).ToList();
 
-            _log.LogInformation("exit from total cost service");
+                var allanimalsdiet = (from animalweight in totalWeights
+                                      join animaldiet in animals on animalweight.Name equals animaldiet.Animal
+                                      select new
+                                      {
+                                          animaldiet.Animal,
+                                          animaldiet.FoodPercentage,
+                                          animaldiet.FoodType,
+                                          meatweight = animaldiet.FoodType.ToLower() == FoodTypes.meat.ToString() ? animalweight.TotalWeight * decimal.Parse(animaldiet.EatingPercentage) : (animaldiet.FoodType.ToLower() == FoodTypes.both.ToString() ? ((animalweight.TotalWeight * decimal.Parse(animaldiet.EatingPercentage)) * decimal.Parse(animaldiet.FoodPercentage, CultureInfo.InvariantCulture) / 100) : 0),
+                                          fruitweight = animaldiet.FoodType.ToLower() == FoodTypes.fruit.ToString() ? animalweight.TotalWeight * decimal.Parse(animaldiet.EatingPercentage) : (animaldiet.FoodType.ToLower() == FoodTypes.both.ToString() ? ((animalweight.TotalWeight * decimal.Parse(animaldiet.EatingPercentage)) * (100 - decimal.Parse(animaldiet.FoodPercentage, CultureInfo.InvariantCulture)) / 100) : 0)
+
+                                      }).ToList();
+
+                var meatcost = allanimalsdiet.ToList().Select(c => c.meatweight).Sum() * (prices.Where(a => a.FoodType.ToLower() == FoodTypes.meat.ToString()).Select(c => c.Rate).FirstOrDefault());
+                var fruitcost = allanimalsdiet.ToList().Select(c => c.fruitweight).Sum() * (prices.Where(a => a.FoodType.ToLower() == FoodTypes.fruit.ToString()).Select(c => c.Rate).FirstOrDefault());
+                totalcost = meatcost + fruitcost;
+
+                _log.LogInformation("Total cost : {totalcost}", totalcost);
+
+                _log.LogInformation("exit from total cost service");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Something went wrong while calculating expenses");
+                _log.LogError(ex.Message);
+            }
+
 
             return totalcost;
         }

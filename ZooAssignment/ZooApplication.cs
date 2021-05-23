@@ -29,10 +29,9 @@ namespace ZooAssignment
             catch (Exception ex)
             {
                 _log.LogError(ex.Message);
-                throw new Exception("Something went wrong with calculation");
+                Console.WriteLine("Something went wrong with calculation, please try again");
             }
 
         }
     }
 }
- 

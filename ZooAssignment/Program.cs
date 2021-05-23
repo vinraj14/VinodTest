@@ -18,14 +18,13 @@ namespace ZooAssignment
             BuildConfig(builder);
 
             Log.Logger = new LoggerConfiguration().
-                ReadFrom.Configuration(builder.Build()).
-                Enrich.FromLogContext().
-                WriteTo.Console().
-                WriteTo.File("Logs/Log.txt", rollingInterval: RollingInterval.Day).
+                ReadFrom.Configuration(builder.Build()).               
                 CreateLogger();
 
             try
             {
+                Console.WriteLine("Welcome to Zoo expenses calculation system");
+                
                 Log.Logger.Information("Application started");
 
                 var host = Host.CreateDefaultBuilder()
@@ -49,6 +48,9 @@ namespace ZooAssignment
             finally
             {
                 Log.CloseAndFlush();
+                Log.Logger.Information("Application stopped");
+                Console.WriteLine("Thank you for using Zoo expenses calculation system, press any button to exit from application");
+                Console.ReadKey(); 
             }
 
 
