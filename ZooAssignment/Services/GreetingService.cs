@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using ZooAssignment.Interfaces;
 
 // DI , Serilog, Settings
 
-namespace ZooAssignment
+namespace ZooAssignment.Services
 {
     public class GreetingService : IGreetingService
     {
@@ -24,6 +25,5 @@ namespace ZooAssignment
             }
         }
     }
-
 
 }

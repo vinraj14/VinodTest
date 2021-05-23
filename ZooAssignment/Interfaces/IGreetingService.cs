@@ -1,4 +1,4 @@
-﻿namespace ZooAssignment
+﻿namespace ZooAssignment.Interfaces
 {
     public interface IGreetingService
     {

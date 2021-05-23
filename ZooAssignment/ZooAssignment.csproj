@@ -6,19 +6,23 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Resource\Price\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Hosting" Version="5.0.0" />
     <PackageReference Include="Serilog.Extensions.Hosting" Version="4.1.2" />
     <PackageReference Include="Serilog.Settings.Configuration" Version="3.1.0" />
     <PackageReference Include="Serilog.Sinks.Console" Version="3.1.1" />
-    <PackageReference Include="TinyCsvParser" Version="2.6.0" />
   </ItemGroup>
 
   <ItemGroup>
     <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resource\Animals\animals.csv">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resource\Content\zoo.xml">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Update="Resource\Price\prices.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
