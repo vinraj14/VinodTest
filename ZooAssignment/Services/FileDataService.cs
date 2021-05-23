@@ -26,9 +26,9 @@ namespace ZooAssignment.Services
             _fileReaderService = fileReaderService;
         }
 
-        public List<Price> GetPrice()
+        public List<Price> GetPrice(string path)
         {
-            string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), _config.GetValue<string>("PriceTextPath"));
+            
             List<Price> priceList = new List<Price>();
             try
             { 
@@ -48,18 +48,17 @@ namespace ZooAssignment.Services
                 }
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {               
-                _log.LogError("The file could not be read:");             
-                _log.LogError(e.Message);
+                _log.LogError("Price text file is not in correct format");             
+                _log.LogError(ex.Message);
             }
 
             return priceList;
         }
 
-        public List<Animals> GetAnimals()
-        {
-            string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), _config.GetValue<string>("AnimalCSVPath"));
+        public List<Animals> GetAnimals(string path)
+        {           
             List<Animals> animalsList = new List<Animals>();
 
             try
@@ -73,38 +72,43 @@ namespace ZooAssignment.Services
                 }
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {               
-                _log.LogError("The file could not be read:");
-             
-                _log.LogError(e.Message);
+                _log.LogError("Animal CSV file is not in correct format");             
+                _log.LogError(ex.Message);
             }
 
             return animalsList;
         }
 
-        public List<ZooContent> GetZooContent()
+        public List<ZooContent> GetZooContent(string path)
         {
-            List<ZooContent> zooContent = new List<ZooContent>();  
+            List<ZooContent> zooContent = new List<ZooContent>();
 
-            string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), _config.GetValue<string>("ZooContentPath"));
-
-            var zooData = _fileReaderService.ReadXMLFile(path);          
-
-            foreach (var animal in zooData)
+            try
             {
-                foreach (var item in animal.Elements())
-                {
-                    var zoo = new ZooContent
-                    {
-                        Type = item.Name.LocalName,
-                        Name = item.FirstAttribute.Value,
-                        Weight = decimal.Parse(item.LastAttribute.Value, CultureInfo.InvariantCulture)
-                    };
-                    zooContent.Add(zoo);
-                }
+                var zooData = _fileReaderService.ReadXMLFile(path);
 
+                foreach (var animal in zooData)
+                {
+                    foreach (var item in animal.Elements())
+                    {
+                        var zoo = new ZooContent
+                        {
+                            Type = item.Name.LocalName,
+                            Name = item.FirstAttribute.Value,
+                            Weight = decimal.Parse(item.LastAttribute.Value, CultureInfo.InvariantCulture)
+                        };
+                        zooContent.Add(zoo);
+                    }
+
+                }
             }
+            catch (Exception ex)
+            {
+                _log.LogError("Zoo content file is not in correct format");
+                _log.LogError(ex.Message);
+            }            
 
             return zooContent;
         }

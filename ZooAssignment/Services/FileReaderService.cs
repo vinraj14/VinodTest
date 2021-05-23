@@ -43,30 +43,64 @@ namespace ZooAssignment.Services
                     }
                 }
             }
+            catch (FileNotFoundException ex)
+            {
+                _log.LogError("File cannot be found");
+                _log.LogError(ex.Message);
+                throw new Exception("File cannot be found");
+            }
+            catch (FileLoadException ex)
+            {
+                _log.LogError("File cannot be loaded");
+                _log.LogError(ex.Message);
+                throw new Exception("File cannot be loaded");
+            }
             catch (Exception e)
             {
-                _log.LogError("The file could not be read:");
+                _log.LogError("Error while returning data, please check your text file");
                 _log.LogError(e.Message);
+                throw new Exception("Error while returning data, please check your text file");
             }
 
             return txtData;
         }
-          
+
         public List<T> ReadCSVFile<T>(string path) where T : new()
         {
             List<T> records = new List<T>();
 
-            var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+            try
             {
-                HasHeaderRecord = false,
-                MissingFieldFound = null,
-                Delimiter = ";"
-            };
+                var config = new CsvConfiguration(CultureInfo.InvariantCulture)
+                {
+                    HasHeaderRecord = false,
+                    MissingFieldFound = null,
+                    Delimiter = ";"
+                };
 
-            using (var reader = new StreamReader(path))
-            using (var csv = new CsvReader(reader, config))
+                using (var reader = new StreamReader(path))
+                using (var csv = new CsvReader(reader, config))
+                {
+                    records.AddRange(csv.GetRecords<T>());
+                }
+            }
+            catch (FileNotFoundException ex)
             {
-                records.AddRange(csv.GetRecords<T>());
+                _log.LogError("File cannot be found");
+                _log.LogError(ex.Message);
+                throw new Exception("File cannot be found");
+            }
+            catch (FileLoadException ex)
+            {
+                _log.LogError("File cannot be loaded");
+                _log.LogError(ex.Message);
+                throw new Exception("File cannot be loaded");
+            }
+            catch (Exception e)
+            {
+                _log.LogError("Error while returning data, please check your csv file");
+                _log.LogError(e.Message);
+                throw new Exception("Error while returning data, please check your csv file");
             }
 
             return records;
@@ -76,6 +110,7 @@ namespace ZooAssignment.Services
         public IEnumerable<XElement> ReadXMLFile(string path)
         {
             IEnumerable<XElement> xElements = null;
+          
             try
             {
                 XmlReaderSettings settings = new XmlReaderSettings();
@@ -84,9 +119,23 @@ namespace ZooAssignment.Services
                 xElements = xdoc.Root.Elements();
 
             }
-            catch (Exception)
+            catch (FileNotFoundException ex)
             {
-                throw;
+                _log.LogError("File cannot be found");
+                _log.LogError(ex.Message);
+                throw new Exception("File cannot be found");
+            }
+            catch (FileLoadException ex)
+            {
+                _log.LogError("File cannot be loaded");
+                _log.LogError(ex.Message);
+                throw new Exception("File cannot be loaded");
+            }
+            catch (Exception e)
+            {
+                _log.LogError("Error while returning data, please check your xml file");
+                _log.LogError(e.Message);
+                throw new Exception("Error while returning data, please check your xml file");
             }
 
             return xElements;

@@ -21,24 +21,36 @@ namespace ZooAssignment
                 ReadFrom.Configuration(builder.Build()).
                 Enrich.FromLogContext().
                 WriteTo.Console().
+                WriteTo.File("Logs/Log.txt", rollingInterval: RollingInterval.Day).
                 CreateLogger();
 
-            Log.Logger.Information("Application Starting");
+            try
+            {
+                Log.Logger.Information("Application started");
 
-            var host = Host.CreateDefaultBuilder()
-                .ConfigureServices((context, services) =>
-                {
-                    services.AddScoped<IGreetingService, GreetingService>();
-                    services.AddScoped<IFileReaderService, FileReaderService>();
-                    services.AddScoped<IFileDataService, FileDataService>();
-                    services.AddScoped<IExpensesCalculationService, ExpensesCalculationService>();
+                var host = Host.CreateDefaultBuilder()
+                    .ConfigureServices((context, services) =>
+                    {
+                        services.AddScoped<IFileReaderService, FileReaderService>();
+                        services.AddScoped<IFileDataService, FileDataService>();
+                        services.AddScoped<IExpensesCalculationService, ExpensesCalculationService>();
 
-                })
-                .UseSerilog()
-                .Build();
+                    })
+                    .UseSerilog()
+                    .Build();
 
-            var svc = ActivatorUtilities.CreateInstance<ExpensesCalculationService>(host.Services);
-            svc.GetTotalCost();
+                var svc = ActivatorUtilities.CreateInstance<ZooApplication>(host.Services);
+                svc.Run();
+            }
+            catch (Exception ex)
+            {
+                Log.Fatal(ex, "The application failed to start correctly");
+            }
+            finally
+            {
+                Log.CloseAndFlush();
+            }
+
 
         }
 
