@@ -7,9 +7,9 @@ namespace ZooAssignment.Interfaces
 {
     public interface IFileReaderService
     {
-        public List<string> ReadTextFile(string path);
+        public List<string> ReadTextFile(string path);       
 
-        public string ReadCSVFile(string path);
+        public List<T> ReadCSVFile<T>(string path) where T : new();
 
         public IEnumerable<XElement> ReadXMLFile(string path);
 

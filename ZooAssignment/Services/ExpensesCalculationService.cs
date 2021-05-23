@@ -23,11 +23,9 @@ namespace ZooAssignment.Services
             _fileDataService = fileDataService;
         }
 
-
-
         public decimal GetTotalCost()
         {
-            _log.LogInformation("entered into total cost");
+            _log.LogInformation("Entered into total cost");
 
             var prices = _fileDataService.GetPrice();
             var animals = _fileDataService.GetAnimals();
@@ -42,14 +40,16 @@ namespace ZooAssignment.Services
                                       animaldiet.Animal,
                                       animaldiet.FoodPercentage,
                                       animaldiet.FoodType,
-                                      meatweight = animaldiet.FoodType.ToLower() == FoodTypes.meat.ToString() ? animalweight.TotalWeight * animaldiet.EatingPercentage : (animaldiet.FoodType.ToLower() == FoodTypes.both.ToString() ? ((animalweight.TotalWeight * animaldiet.EatingPercentage) * decimal.Parse(animaldiet.FoodPercentage, CultureInfo.InvariantCulture) / 100) : 0),
-                                      fruitweight = animaldiet.FoodType.ToLower() == FoodTypes.fruit.ToString() ? animalweight.TotalWeight * animaldiet.EatingPercentage : (animaldiet.FoodType.ToLower() == FoodTypes.both.ToString() ? ((animalweight.TotalWeight * animaldiet.EatingPercentage) * (100 - decimal.Parse(animaldiet.FoodPercentage, CultureInfo.InvariantCulture)) / 100) : 0)
+                                      meatweight = animaldiet.FoodType.ToLower() == FoodTypes.meat.ToString() ? animalweight.TotalWeight * decimal.Parse(animaldiet.EatingPercentage) : (animaldiet.FoodType.ToLower() == FoodTypes.both.ToString() ? ((animalweight.TotalWeight * decimal.Parse(animaldiet.EatingPercentage)) * decimal.Parse(animaldiet.FoodPercentage, CultureInfo.InvariantCulture) / 100) : 0),
+                                      fruitweight = animaldiet.FoodType.ToLower() == FoodTypes.fruit.ToString() ? animalweight.TotalWeight * decimal.Parse(animaldiet.EatingPercentage) : (animaldiet.FoodType.ToLower() == FoodTypes.both.ToString() ? ((animalweight.TotalWeight * decimal.Parse(animaldiet.EatingPercentage)) * (100 - decimal.Parse(animaldiet.FoodPercentage, CultureInfo.InvariantCulture)) / 100) : 0)
 
                                   }).ToList();
 
             var meatcost = allanimalsdiet.ToList().Select(c => c.meatweight).Sum() * (prices.Where(a => a.FoodType.ToLower() == FoodTypes.meat.ToString()).Select(c => c.Rate).FirstOrDefault());
             var fruitcost = allanimalsdiet.ToList().Select(c => c.fruitweight).Sum() * (prices.Where(a => a.FoodType.ToLower() == FoodTypes.fruit.ToString()).Select(c => c.Rate).FirstOrDefault());
             var totalcost = meatcost + fruitcost;
+
+            _log.LogInformation("Total money needed for a day : {totalcost}", totalcost);
 
             return totalcost;
         }

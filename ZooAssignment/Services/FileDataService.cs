@@ -31,23 +31,7 @@ namespace ZooAssignment.Services
             string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), _config.GetValue<string>("PriceTextPath"));
             List<Price> priceList = new List<Price>();
             try
-            {
-                //FileStream fileStream = new FileStream(path, FileMode.Open);
-                //using (StreamReader reader = new StreamReader(fileStream))
-                //{
-                //    string line = "";
-                //    while ((line = reader.ReadLine()) != null)
-                //    {
-                //        var rate = line.Split('=');
-                //        var price = new Price
-                //        {
-                //            FoodType = rate[0],
-                //            Rate = decimal.Parse(rate[1], CultureInfo.InvariantCulture)
-                //        };
-                //        prices.Add(price);
-                //    }
-                //}
-
+            { 
                 var pricedata = _fileReaderService.ReadTextFile(path);
 
                 foreach (var prices in pricedata)
@@ -63,13 +47,10 @@ namespace ZooAssignment.Services
                     priceList.Add(price);
                 }
 
-
             }
             catch (Exception e)
-            {
-                // Something went wrong.
-                _log.LogError("The file could not be read:");
-                //print error message
+            {               
+                _log.LogError("The file could not be read:");             
                 _log.LogError(e.Message);
             }
 
@@ -83,42 +64,19 @@ namespace ZooAssignment.Services
 
             try
             {
-                var animlasData = _fileReaderService.ReadCSVFile(path);
+                var animalsData = _fileReaderService.ReadCSVFile<Animals>(path);                
 
-                //CsvParserOptions csvParserOptions = new CsvParserOptions(false, ';');
-                //CsvUserDetailsMapping csvMapper = new CsvUserDetailsMapping();
-                //CsvParser<Animals> csvParser = new CsvParser<Animals>(csvParserOptions, csvMapper);
-                //var result = csvParser.ReadFromFile(path, Encoding.ASCII).ToList();
-                //foreach (DataRow row in animlasData.Rows)
-                //{
-
-
-                //    //details.Result.FoodPercentage = details.Result.FoodPercentage.Replace("%", string.Empty);
-                //    //animals.Add(details.Result);
-
-                //    Console.WriteLine(row);
-                //}
-
-                //var records = animlasData.GetRecords<Animals>();
-
-
-
-                List<Animals> animals = (List<Animals>)JsonConvert.DeserializeObject(animlasData, (typeof(List<Animals>)));
-
-                foreach (Animals record in animals)
+                foreach (Animals record in animalsData)
                 {
                     record.FoodPercentage = record.FoodPercentage.Replace("%", string.Empty);
-                    animals.Add(record);
-                    Console.WriteLine(record);
+                    animalsList.Add(record);                   
                 }
 
             }
             catch (Exception e)
-            {
-
-                // Something went wrong.
+            {               
                 _log.LogError("The file could not be read:");
-                //print error message
+             
                 _log.LogError(e.Message);
             }
 
@@ -127,17 +85,11 @@ namespace ZooAssignment.Services
 
         public List<ZooContent> GetZooContent()
         {
-            List<ZooContent> zooContent = new List<ZooContent>();
-            //XmlReaderSettings settings = new XmlReaderSettings();
-            //settings.IgnoreWhitespace = true;
-
+            List<ZooContent> zooContent = new List<ZooContent>();  
 
             string path = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), _config.GetValue<string>("ZooContentPath"));
 
-            var zooData = _fileReaderService.ReadXMLFile(path);
-
-            //var xdoc = XDocument.Load(path);
-            //IEnumerable<XElement> animals = xdoc.Root.Elements();
+            var zooData = _fileReaderService.ReadXMLFile(path);          
 
             foreach (var animal in zooData)
             {
