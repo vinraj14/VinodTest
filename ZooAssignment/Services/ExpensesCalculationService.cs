@@ -15,60 +15,79 @@ namespace ZooAssignment.Services
 {
     public class ExpensesCalculationService : IExpensesCalculationService
     {
-        private readonly ILogger<ExpensesCalculationService> _log;
-        private readonly IConfiguration _config;
+        private readonly ILogger<ExpensesCalculationService> _logger;
         private readonly IFileDataService _fileDataService;
 
-        public ExpensesCalculationService(ILogger<ExpensesCalculationService> log, IConfiguration config, IFileDataService fileDataService)
+        public ExpensesCalculationService(ILogger<ExpensesCalculationService> logger, IFileDataService fileDataService)
         {
-            _log = log;
-            _config = config;
+            _logger = logger;
             _fileDataService = fileDataService;
         }
 
         public List<Price> GetPrice()
         {
+            Console.WriteLine("Please enter path of price text file");
+            string txtPath = Console.ReadLine();
 
-            string textPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), _config.GetValue<string>("PriceTextPath"));
-            var prices = _fileDataService.GetPrice(textPath);
+            var prices = _fileDataService.GetPrice(txtPath.Trim());
 
             if (prices.Count == 0)
             {
-                Console.WriteLine("Price details not availalbe, press any button to exit from application");
-                Console.ReadKey();
-                Environment.Exit(0);
+                Console.WriteLine("Press 1 to continue or press any key to exit from application");
+                ConsoleKeyInfo action = Console.ReadKey();
+
+                if (action.KeyChar == '1')
+                {
+                    Console.WriteLine();
+                    prices = GetPrice();
+                }
+                else
+                    Environment.Exit(0);
             }
+
 
             return prices;
         }
 
         public List<Animals> GetAnimals()
         {
+            Console.WriteLine("Please enter path of animal csv file");
+            string csvPath = Console.ReadLine();
 
-            string csvPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), _config.GetValue<string>("AnimalCSVPath"));
-
-            var animals = _fileDataService.GetAnimals(csvPath);
+            var animals = _fileDataService.GetAnimals(csvPath.Trim());
             if (animals.Count == 0)
             {
-                Console.WriteLine("Animal details not availalbe, press any button to exit from application");
-                Console.ReadKey();
-                Environment.Exit(0);
+                Console.WriteLine("Press 1 to continue or press any key to exit from application");
+                ConsoleKeyInfo action = Console.ReadKey();
+                if (action.KeyChar == '1')
+                {
+                    Console.WriteLine();
+                    animals = GetAnimals();
+                }
+                else
+                    Environment.Exit(0);
             }
 
             return animals;
         }
 
         public List<ZooContent> GetZooContents()
-        {            
+        {
+            Console.WriteLine("Please enter path of zoo content xml file");
+            string xmlPath = Console.ReadLine();
 
-            string xmlPath = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), _config.GetValue<string>("ZooContentPath"));
-
-            var zooContents = _fileDataService.GetZooContent(xmlPath);
-            if (zooContents.Count == 0)
+            var zooContents = _fileDataService.GetZooContent(xmlPath.Trim());
+            if (zooContents == null)
             {
-                Console.WriteLine("Zoo content details not availalbe, press any button to exit from application");
-                Console.ReadKey();
-                Environment.Exit(0);
+                Console.WriteLine("Press 1 to continue or press any key to exit from application");
+                ConsoleKeyInfo action = Console.ReadKey();
+                if (action.KeyChar == '1')
+                {
+                    Console.WriteLine();
+                    zooContents = GetZooContents();
+                }
+                else
+                    Environment.Exit(0);
             }
 
             return zooContents;
@@ -76,19 +95,19 @@ namespace ZooAssignment.Services
 
         public decimal GetTotalCost()
         {
+            var prices = GetPrice();
+            var animals = GetAnimals();
+            var zooContents = GetZooContents();
+            return CalcualteTotalCost(prices, animals, zooContents);
+        }
+
+        public decimal CalcualteTotalCost(List<Price> prices, List<Animals> animals, List<ZooContent> zooContents)
+        {
             decimal totalcost = 0;
 
             try
             {
-                _log.LogInformation("Entered into total cost service");
-
-
-                var prices = GetPrice();
-
-                var animals = GetAnimals();
-
-                var zooContents = GetZooContents();
-
+                _logger.LogInformation("Entered into total cost service");
 
                 var totalWeights = zooContents.GroupBy(a => a.Type).Select(a => new { TotalWeight = a.Sum(b => b.Weight), Name = a.Key }).ToList();
 
@@ -108,14 +127,14 @@ namespace ZooAssignment.Services
                 var fruitcost = allanimalsdiet.ToList().Select(c => c.fruitweight).Sum() * (prices.Where(a => a.FoodType.ToLower() == FoodTypes.fruit.ToString()).Select(c => c.Rate).FirstOrDefault());
                 totalcost = meatcost + fruitcost;
 
-                _log.LogInformation("Total cost : {totalcost}", totalcost);
+                _logger.LogInformation("Total cost : {totalcost}", totalcost);
 
-                _log.LogInformation("exit from total cost service");
+                _logger.LogInformation("exit from total cost service");
             }
             catch (Exception ex)
             {
                 Console.WriteLine("Something went wrong while calculating expenses");
-                _log.LogError(ex.Message);
+                _logger.LogError(ex.Message);
             }
 
 

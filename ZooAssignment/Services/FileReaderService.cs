@@ -19,13 +19,11 @@ namespace ZooAssignment.Services
 {
     public class FileReaderService : IFileReaderService
     {
-        private readonly ILogger<FileReaderService> _log;
-        private readonly IConfiguration _config;
-
-        public FileReaderService(ILogger<FileReaderService> log, IConfiguration config)
+        private readonly ILogger<FileReaderService> _logger;
+     
+        public FileReaderService(ILogger<FileReaderService> logger)
         {
-            _log = log;
-            _config = config;
+            _logger = logger;           
         }
 
         public List<string> ReadTextFile(string path)
@@ -33,6 +31,7 @@ namespace ZooAssignment.Services
             List<string> txtData = new List<string>();
             try
             {
+                _logger.LogInformation("ReadTextFile method start");
                 FileStream fileStream = new FileStream(path, FileMode.Open);
                 using (StreamReader reader = new StreamReader(fileStream))
                 {
@@ -42,25 +41,33 @@ namespace ZooAssignment.Services
                         txtData.Add(line);
                     }
                 }
+
+                if (txtData.Count == 0) {
+                    Console.WriteLine("Price text file has no data, please check your file");
+                }
             }
             catch (FileNotFoundException ex)
             {
-                _log.LogError("File cannot be found");
-                _log.LogError(ex.Message);
+                _logger.LogError("File cannot be found");
+                _logger.LogError(ex.Message);
                 Console.WriteLine("File cannot be found");
             }
             catch (FileLoadException ex)
             {
-                _log.LogError("File cannot be loaded");
-                _log.LogError(ex.Message);
+                _logger.LogError("File cannot be loaded");
+                _logger.LogError(ex.Message);
                 Console.WriteLine("File cannot be loaded");
             }
             catch (Exception e)
             {
-                _log.LogError("Error while returning data, please check your text file");
-                _log.LogError(e.Message);
+                _logger.LogError("Error while returning data, please check your text file");
+                _logger.LogError(e.Message);
                 Console.WriteLine("Error while returning data, please check your text file");
             }
+
+            _logger.LogInformation("ReadTextFile method exit");
+
+
 
             return txtData;
         }
@@ -83,23 +90,29 @@ namespace ZooAssignment.Services
                 {
                     records.AddRange(csv.GetRecords<T>());
                 }
+
+                if (records.Count == 0)
+                {
+                    Console.WriteLine("Animal CSV file has no data, please check your file");
+                }
+
             }
             catch (FileNotFoundException ex)
             {
-                _log.LogError("File cannot be found");
-                _log.LogError(ex.Message);
+                _logger.LogError("File cannot be found");
+                _logger.LogError(ex.Message);
                 Console.WriteLine("File cannot be found");
             }
             catch (FileLoadException ex)
             {
-                _log.LogError("File cannot be loaded");
-                _log.LogError(ex.Message);
+                _logger.LogError("File cannot be loaded");
+                _logger.LogError(ex.Message);
                 Console.WriteLine("File cannot be loaded");
             }
             catch (Exception e)
             {
-                _log.LogError("Error while returning data, please check your csv file");
-                _log.LogError(e.Message);
+                _logger.LogError("Error while returning data, please check your csv file");
+                _logger.LogError(e.Message);
                 Console.WriteLine("Error while returning data, please check your csv file");
             }
 
@@ -121,21 +134,21 @@ namespace ZooAssignment.Services
             }
             catch (FileNotFoundException ex)
             {
-                _log.LogError("File cannot be found");
-                _log.LogError(ex.Message);
+                _logger.LogError("File cannot be found");
+                _logger.LogError(ex.Message);
                 Console.WriteLine("File cannot be found");
             }
             catch (FileLoadException ex)
             {
-                _log.LogError("File cannot be loaded");
-                _log.LogError(ex.Message);
+                _logger.LogError("File cannot be loaded");
+                _logger.LogError(ex.Message);
                 Console.WriteLine("File cannot be loaded");
             }
             catch (Exception e)
             {
-                _log.LogError("Error while returning data, please check your xml file");
-                _log.LogError(e.Message);
-                 Console.WriteLine("Error while returning data, please check your xml file");
+                _logger.LogError("xml file has not data, please check your file");
+                _logger.LogError(e.Message);
+                Console.WriteLine("xml file has not data, please check your file");
             }
 
             return xElements;

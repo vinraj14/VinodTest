@@ -11,5 +11,6 @@ namespace ZooAssignment.Interfaces
         public List<Animals> GetAnimals();
         public List<ZooContent> GetZooContents();
         public decimal GetTotalCost();
+        public decimal CalcualteTotalCost(List<Price> prices, List<Animals> animals, List<ZooContent> zooContents);       
     }
 }

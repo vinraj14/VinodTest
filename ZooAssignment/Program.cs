@@ -32,8 +32,7 @@ namespace ZooAssignment
                     {
                         services.AddScoped<IFileReaderService, FileReaderService>();
                         services.AddScoped<IFileDataService, FileDataService>();
-                        services.AddScoped<IExpensesCalculationService, ExpensesCalculationService>();
-
+                        services.AddScoped<IExpensesCalculationService, ExpensesCalculationService>();     
                     })
                     .UseSerilog()
                     .Build();
@@ -48,9 +47,7 @@ namespace ZooAssignment
             finally
             {
                 Log.CloseAndFlush();
-                Log.Logger.Information("Application stopped");
-                Console.WriteLine("Thank you for using Zoo expenses calculation system, press any button to exit from application");
-                Console.ReadKey(); 
+                Log.Logger.Information("Application stopped");               
             }
 
 

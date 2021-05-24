@@ -15,23 +15,23 @@ namespace ZooAssignment.Services
 {
     public class FileDataService : IFileDataService
     {
-        private readonly ILogger<FileDataService> _log;
-        private readonly IConfiguration _config;
+        private readonly ILogger<FileDataService> _logger;
         private readonly IFileReaderService _fileReaderService;
 
-        public FileDataService(ILogger<FileDataService> log, IConfiguration config, IFileReaderService fileReaderService)
+        public FileDataService(ILogger<FileDataService> logger, IFileReaderService fileReaderService)
         {
-            _log = log;
-            _config = config;
+            _logger = logger;
             _fileReaderService = fileReaderService;
         }
 
         public List<Price> GetPrice(string path)
         {
-            
+
             List<Price> priceList = new List<Price>();
             try
-            { 
+            {
+                _logger.LogInformation("GetPrice method start");
+
                 var pricedata = _fileReaderService.ReadTextFile(path);
 
                 foreach (var prices in pricedata)
@@ -49,34 +49,36 @@ namespace ZooAssignment.Services
 
             }
             catch (Exception ex)
-            {               
-                _log.LogError("Price text file is not in correct format");             
-                _log.LogError(ex.Message);
+            {
+                _logger.LogError("Price text file is not in correct format");
+                _logger.LogError(ex.Message);
                 Console.WriteLine("Price text file is not in correct format");
             }
+
+            _logger.LogInformation("GetPrice method exit");
 
             return priceList;
         }
 
         public List<Animals> GetAnimals(string path)
-        {           
+        {
             List<Animals> animalsList = new List<Animals>();
 
             try
             {
-                var animalsData = _fileReaderService.ReadCSVFile<Animals>(path);                
+                var animalsData = _fileReaderService.ReadCSVFile<Animals>(path);
 
                 foreach (Animals record in animalsData)
                 {
                     record.FoodPercentage = record.FoodPercentage.Replace("%", string.Empty);
-                    animalsList.Add(record);                   
+                    animalsList.Add(record);
                 }
 
             }
             catch (Exception ex)
-            {               
-                _log.LogError("Animal CSV file is not in correct format");             
-                _log.LogError(ex.Message);
+            {
+                _logger.LogError("Animal CSV file is not in correct format");
+                _logger.LogError(ex.Message);
                 Console.WriteLine("Animal CSV file is not in correct format");
             }
 
@@ -90,6 +92,9 @@ namespace ZooAssignment.Services
             try
             {
                 var zooData = _fileReaderService.ReadXMLFile(path);
+
+                if (zooData == null)
+                    return null;
 
                 foreach (var animal in zooData)
                 {
@@ -108,10 +113,10 @@ namespace ZooAssignment.Services
             }
             catch (Exception ex)
             {
-                _log.LogError("Zoo content file is not in correct format");
-                _log.LogError(ex.Message);
+                _logger.LogError("Zoo content file is not in correct format");
+                _logger.LogError(ex.Message);
                 Console.WriteLine("Zoo content file is not in correct format");
-            }            
+            }
 
             return zooContent;
         }
