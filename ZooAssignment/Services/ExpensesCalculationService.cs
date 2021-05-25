@@ -26,7 +26,7 @@ namespace ZooAssignment.Services
 
         public List<Price> GetPrice()
         {
-            Console.WriteLine("Please enter path of price text file");
+            Console.WriteLine("Please enter path of price text file with file name and extension");
             string txtPath = Console.ReadLine();
 
             var prices = _fileDataService.GetPrice(txtPath.Trim());
@@ -51,7 +51,7 @@ namespace ZooAssignment.Services
 
         public List<Animals> GetAnimals()
         {
-            Console.WriteLine("Please enter path of animal csv file");
+            Console.WriteLine("Please enter path of animal csv file with file name and extension");
             string csvPath = Console.ReadLine();
 
             var animals = _fileDataService.GetAnimals(csvPath.Trim());
@@ -73,7 +73,7 @@ namespace ZooAssignment.Services
 
         public List<ZooContent> GetZooContents()
         {
-            Console.WriteLine("Please enter path of zoo content xml file");
+            Console.WriteLine("Please enter path of zoo content xml file with file name and extension");
             string xmlPath = Console.ReadLine();
 
             var zooContents = _fileDataService.GetZooContent(xmlPath.Trim());
